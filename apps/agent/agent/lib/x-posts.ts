@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { enabled, unavailable } from "./capabilities";
-import { EXTERNAL_SOURCES } from "./external-sources-config";
 import { parseBody, requestJson } from "./external-http";
+import { EXTERNAL_SOURCES } from "./external-sources-config";
 import { parseSocialUrl } from "./socials";
 
 const xUserResponse = z.object({
@@ -119,7 +119,9 @@ function handleFromInput(input: string): string | null {
 	return parsed.handle;
 }
 
-export async function lookupXPosts(input: string): Promise<
+export async function lookupXPosts(
+	input: string,
+): Promise<
 	| ReturnType<typeof unavailable>
 	| { ok: true; profile: ObservedXProfile }
 	| { ok: false; configured: true; reason: string }

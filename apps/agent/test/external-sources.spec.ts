@@ -1,8 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import {
-	parseLinearSearch,
-	searchLinearIssues,
-} from "../agent/lib/linear";
+import { parseLinearSearch, searchLinearIssues } from "../agent/lib/linear";
 import { parseNotionSearch, searchNotionPages } from "../agent/lib/notion";
 import { lookupXPosts, parseXTweets, parseXUser } from "../agent/lib/x-posts";
 
@@ -133,9 +130,10 @@ describe("parseXUser and parseXTweets", () => {
 	});
 
 	it("surfaces an X error instead of an empty user", () => {
-		expect(
-			parseXUser({ errors: [{ detail: "User not found" }] }),
-		).toEqual({ ok: false, reason: "User not found" });
+		expect(parseXUser({ errors: [{ detail: "User not found" }] })).toEqual({
+			ok: false,
+			reason: "User not found",
+		});
 	});
 });
 

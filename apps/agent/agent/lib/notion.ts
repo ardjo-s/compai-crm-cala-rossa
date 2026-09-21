@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { enabled, unavailable } from "./capabilities";
-import { EXTERNAL_SOURCES } from "./external-sources-config";
 import { parseBody, requestJson } from "./external-http";
+import { EXTERNAL_SOURCES } from "./external-sources-config";
 
 const notionTitleText = z
 	.object({
@@ -28,21 +28,21 @@ export type ObservedNotionPage = {
 	lastEditedAt: string | null;
 };
 
+const notionTitleProperty = z.object({
+	type: z.string().optional(),
+	title: z.array(notionTitleText).optional(),
+});
+
 function titleFromProperties(
-	properties: Record<string, unknown> | undefined,
+	properties: z.infer<typeof notionPage>["properties"],
 ): string | null {
 	if (!properties) return null;
 
 	for (const value of Object.values(properties)) {
-		if (!value || typeof value !== "object") continue;
-		const property = value as {
-			type?: unknown;
-			title?: unknown;
-			name?: unknown;
-		};
-		if (property.type !== "title" && !Array.isArray(property.title)) continue;
-		const parts = z.array(notionTitleText).catch([]).parse(property.title);
-		const title = parts
+		const property = notionTitleProperty.safeParse(value);
+		if (!property.success) continue;
+		if (property.data.type !== "title" && !property.data.title) continue;
+		const title = (property.data.title ?? [])
 			.map((part) => part.plain_text)
 			.join("")
 			.trim();
@@ -73,7 +73,9 @@ export function parseNotionSearch(value: unknown): ObservedNotionPage[] {
 	return pages;
 }
 
-export async function searchNotionPages(query: string): Promise<
+export async function searchNotionPages(
+	query: string,
+): Promise<
 	| ReturnType<typeof unavailable>
 	| { ok: true; pages: ObservedNotionPage[] }
 	| { ok: false; configured: true; reason: string }

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 import { EXTERNAL_SOURCES } from "./external-sources-config";
 
 export type HttpFailure = {

@@ -1,11 +1,11 @@
-import { DealStage } from "@crm/db/enums";
 import { describe, expect, it } from "bun:test";
+import { DealStage } from "@crm/db/enums";
+import { InvalidInput } from "../src/index";
 import {
 	contactsWithoutEmail,
 	outboundExclusion,
 	parseProspectIntake,
 } from "../src/prospect-intake";
-import { InvalidInput } from "../src/index";
 
 const company = {
 	name: "Acme",

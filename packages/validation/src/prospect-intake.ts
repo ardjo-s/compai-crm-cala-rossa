@@ -1,5 +1,5 @@
-import { DealStage } from "@crm/db/enums";
 import { OPEN_DEAL_STAGES } from "@crm/db/deal-stage";
+import { DealStage } from "@crm/db/enums";
 import { z } from "zod";
 import { parse } from "./index";
 
@@ -11,7 +11,9 @@ const observedEmail = z
 	.string()
 	.trim()
 	.email()
-	.describe("An address that was observed. Never a guessed or patterned email.");
+	.describe(
+		"An address that was observed. Never a guessed or patterned email.",
+	);
 
 const observedUrl = z.string().trim().url().max(2000);
 

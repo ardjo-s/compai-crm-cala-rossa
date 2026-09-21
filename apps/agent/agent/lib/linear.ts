@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { enabled, unavailable } from "./capabilities";
-import { EXTERNAL_SOURCES } from "./external-sources-config";
 import { parseBody, requestJson } from "./external-http";
+import { EXTERNAL_SOURCES } from "./external-sources-config";
 
 const linearIssue = z.object({
 	id: z.string(),
@@ -97,7 +97,9 @@ export function linearSearchError(value: unknown): string | null {
 	return message ?? null;
 }
 
-export async function searchLinearIssues(query: string): Promise<
+export async function searchLinearIssues(
+	query: string,
+): Promise<
 	| ReturnType<typeof unavailable>
 	| { ok: true; issues: ObservedLinearIssue[] }
 	| { ok: false; configured: true; reason: string }
