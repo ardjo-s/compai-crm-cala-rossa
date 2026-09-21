@@ -8,6 +8,10 @@ Setup, DB commands, Google Cloud and the `vercel env pull` hazard: `docs/setup.m
 and nothing that is not read. `packages/env` walks up to the workspace root and reads
 `.env`, then `.env.local` on top.
 
+This fork also ships [`.env.ardjo.example`](../.env.ardjo.example) for the
+**Cala Rossa** install. Copy that overlay into `.env`. Do not copy `.env` from
+`ardjo-s/compai-crm`. Never share `DATABASE_URL`. Walkthrough: `docs/ardjo-setup.md`.
+
 - **Real environment variables always win** — the loader never overwrites
   `process.env`, so Vercel/Docker/CI takes precedence.
 - **Never add a per-package `.env`.** Four once existed with duplicate
@@ -113,6 +117,9 @@ single place that knows what is set.
 | --- | --- |
 | `PERPLEXITY_API_KEY` | Open-web research with citations; finds a LinkedIn slug |
 | `GITHUB_TOKEN` | Raises the GitHub rate limit from 60/hour |
+| `NOTION_API_KEY` | Search Notion pages this install can read |
+| `LINEAR_API_KEY` | Search existing Linear issues (read-only; no create) |
+| `X_BEARER_TOKEN` | Dated public posts from an X profile already on the record |
 | `BLOB_READ_WRITE_TOKEN` | Mirrors logos and photos into Blob |
 | `AI_GATEWAY_API_KEY` | The model. Not needed on Vercel (OIDC) |
 | `AGENT_BRIDGE_SECRET` | The rep-facing Agent panel — see `agent.md` |

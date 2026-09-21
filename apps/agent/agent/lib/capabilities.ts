@@ -72,6 +72,24 @@ export function capabilitiesFrom(
 			gives:
 				"somewhere to keep a logo or a profile photo. Without it a record has no picture at all, because the URLs these sources hand back expire and are never stored as they are",
 		},
+		{
+			...fromEnv("NOTION_API_KEY"),
+			label: "Notion pages",
+			gives:
+				"titles and URLs of pages this install can read, as a supporting source only",
+		},
+		{
+			...fromEnv("LINEAR_API_KEY"),
+			label: "Linear issues",
+			gives:
+				"existing issues matching a derived search, so a follow-up is not invented twice",
+		},
+		{
+			...fromEnv("X_BEARER_TOKEN"),
+			label: "X posts",
+			gives:
+				"dated public posts from an X profile already on the record, with permalinks",
+		},
 	];
 }
 

@@ -4,11 +4,16 @@ Operational detail moved out of the rule docs. `api.md`, `agent.md` and
 `environment.md` are what agents read before changing code; this is what a person
 reads once.
 
+This repository is the **Cala Rossa** CRM (`ardjo-s/compai-crm-cala-rossa`), not
+the THEWHATIF / GojiberryAI install. Owner overlay and dual-install rules:
+`docs/ardjo-setup.md`. Copy `.env.ardjo.example`, not a `.env` from
+`ardjo-s/compai-crm`. Never share `DATABASE_URL`.
+
 ## First run
 
 ```sh
-cp .env.example .env        # fill DATABASE_URL, BETTER_AUTH_SECRET, ALLOWED_SIGN_IN
-docker compose up -d        # Postgres, matching .env.example
+cp .env.ardjo.example .env  # Cala Rossa overlay; paste secrets. Never commit .env.
+docker compose up -d        # Postgres, matching .env.example defaults
 bun run db:migrate && bun run db:seed
 bun run dev                 # app :3000, api :3001, agent :2000
 ```

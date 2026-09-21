@@ -187,13 +187,28 @@ Written up where the work happens, not in a style guide:
   that is always the same value is a column, an index and a permissions check that
   buys nothing and reads like a real one at review time.
 
+## This fork (Cala Rossa)
+
+This repository is [`ardjo-s/compai-crm-cala-rossa`](https://github.com/ardjo-s/compai-crm-cala-rossa).
+**It is the Cala Rossa project CRM only.** Comp AI is single-tenant, so a second
+business needs a second install — not a second org in this one.
+
+The THEWHATIF / GojiberryAI CRM is [`ardjo-s/compai-crm`](https://github.com/ardjo-s/compai-crm).
+That install has its own Neon database, Vercel projects, and secrets.
+**Never share `DATABASE_URL` between the two.** The same Google OAuth client is
+fine if both API redirect URIs are listed.
+
+Owner setup: [`docs/ardjo-setup.md`](./docs/ardjo-setup.md).
+Env overlay: [`.env.ardjo.example`](./.env.ardjo.example).
+Local isolated Postgres: [`scripts/cala-rossa/`](./scripts/cala-rossa/README.md).
+
 ## Quick start
 
 You need [Bun](https://bun.com) and Docker.
 
 ```sh
-git clone https://github.com/trycompai/crm.git && cd crm
-cp .env.example .env          # then fill in the values below
+git clone https://github.com/ardjo-s/compai-crm-cala-rossa.git && cd compai-crm-cala-rossa
+cp .env.ardjo.example .env    # Cala Rossa overlay; then paste secrets. Never commit .env.
 bun install
 
 docker compose up -d          # Postgres on :5432
@@ -213,7 +228,9 @@ yet. If you are here to send a pull request, `git switch main` first and read
 
 ### The values to set
 
-Open `.env` and set these. Everything else in the file is optional and commented out.
+Open `.env` (copied from `.env.ardjo.example` on this fork) and set these.
+The overlay already sets `ALLOWED_SIGN_IN` to `ardjo.design,hi@ardjo.design`.
+Generate `BETTER_AUTH_SECRET` here. Do not copy secrets from `ardjo-s/compai-crm`.
 
 | Variable                                   | What to put in it                                                    |
 | ------------------------------------------ | -------------------------------------------------------------------- |

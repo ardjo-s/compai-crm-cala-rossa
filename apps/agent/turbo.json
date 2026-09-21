@@ -20,7 +20,10 @@
 				"BLOB_READ_WRITE_TOKEN",
 				"DATABASE_URL",
 				"GITHUB_TOKEN",
-				"PERPLEXITY_API_KEY"
+				"LINEAR_API_KEY",
+				"NOTION_API_KEY",
+				"PERPLEXITY_API_KEY",
+				"X_BEARER_TOKEN"
 			]
 		},
 		"dev:headless": {
@@ -33,7 +36,10 @@
 				"BLOB_READ_WRITE_TOKEN",
 				"DATABASE_URL",
 				"GITHUB_TOKEN",
-				"PERPLEXITY_API_KEY"
+				"LINEAR_API_KEY",
+				"NOTION_API_KEY",
+				"PERPLEXITY_API_KEY",
+				"X_BEARER_TOKEN"
 			]
 		},
 		/**
