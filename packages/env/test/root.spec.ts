@@ -91,6 +91,8 @@ describe("the committed .env.ardjo.example", () => {
 	const example = readFileSync(join(repoRoot, ".env.ardjo.example"), "utf8");
 
 	it("sets the work allow-list and no secrets", () => {
+		expect(example).toContain("Cala Rossa");
+		expect(example).toContain("ardjo-s/compai-crm-cala-rossa");
 		expect(example).toContain('ALLOWED_SIGN_IN="ardjo.design,hi@ardjo.design"');
 		expect(example).toContain('BETTER_AUTH_SECRET=""');
 		expect(example).toContain('GOOGLE_CLIENT_SECRET=""');

@@ -1,7 +1,9 @@
-# Setup for this fork (Ardjo)
+# Setup for this install (Cala Rossa)
 
-This fork is `ardjo-s/compai-crm-cala-rossa`, default branch `release`.
-It is Comp AI CRM, pointed at **THEWHATIF.COMPANY / GojiberryAI** sales work.
+This repo is `ardjo-s/compai-crm-cala-rossa`, default branch `release`.
+**It is the Cala Rossa project CRM only.** Comp AI is single-tenant and has
+no organisations, so a second business needs a second install — not a second
+org inside this one.
 
 Read `docs/setup.md` and `docs/environment.md` first. This file only adds the
 values that belong to this install. **Do not commit real secrets.**
@@ -12,6 +14,37 @@ Allow-list domain: **ardjo.design**.
 
 A personal Gmail exists. Do not put it in git. Add it to `ALLOWED_SIGN_IN` in
 the local `.env` or in Vercel only if that address must sign in.
+
+## Two installs, two databases
+
+| | This repo | The other repo |
+| --- | --- | --- |
+| GitHub | `ardjo-s/compai-crm-cala-rossa` | `ardjo-s/compai-crm` |
+| What it is | Cala Rossa project CRM | THEWHATIF.COMPANY / GojiberryAI CRM |
+| Database | Its own Neon (or local Postgres) | A **different** Neon |
+| Vercel | Its own three projects (app, api, agent) | A **different** trio |
+| Secrets | Its own `.env` / Vercel env | Its own, never copied from here |
+
+**Never share `DATABASE_URL` between installs.** One connection string in both
+places writes Cala Rossa rows into the company CRM, or the reverse. Generate
+`BETTER_AUTH_SECRET`, `AGENT_BRIDGE_SECRET` and `CRON_SECRET` separately too.
+
+The same Google OAuth client **is** fine. Add **both** API redirect URIs on
+that client:
+
+| Install | Redirect URI |
+| --- | --- |
+| This Cala Rossa API, local | `http://localhost:3001/api/auth/callback/google` |
+| This Cala Rossa API, deployed | `https://<CALA_ROSSA_API_HOST>/api/auth/callback/google` |
+| Main company API, deployed | `https://<COMPANY_API_HOST>/api/auth/callback/google` |
+
+If both installs run locally at once, they cannot share `:3000` / `:3001` /
+`:2000`. Stop one, or give the second install different ports and a second
+local redirect URI.
+
+`scripts/cala-rossa/` is the **local** isolated Postgres for this project
+(`cala_rossa_crm` on `127.0.0.1:55432`). That is this install's data, not a
+sidecar next to a company workspace. The company CRM lives in the other repo.
 
 ## Tool map
 
@@ -41,11 +74,15 @@ cp .env.ardjo.example .env
 bun install
 docker compose up -d
 bun run db:deploy
-bun run db:seed          # optional demo pipeline
+bun run db:seed          # optional demo pipeline; skip for a clean Cala Rossa DB
 bun run dev              # app :3000, api :3001, agent :2000
 ```
 
-Generate the two secrets yourself:
+For the isolated local profile (loopback Postgres on `:55432`), use
+`scripts/cala-rossa/` instead of `docker compose`. See
+`scripts/cala-rossa/README.md`.
+
+Generate the secrets yourself. Do not reuse values from `ardjo-s/compai-crm`.
 
 ```sh
 openssl rand -base64 32   # BETTER_AUTH_SECRET
@@ -67,10 +104,11 @@ Set the Google pair in `.env`. Leave Microsoft empty unless you add Entra later.
 ## Google Cloud (Gmail + Calendar + sign-in)
 
 One OAuth client does sign-in **and** mailbox sync. There is no extra redirect
-for Gmail.
+for Gmail. The same client may serve this install and `ardjo-s/compai-crm` if
+every API origin is listed.
 
 1. Open [Google Cloud credentials](https://console.cloud.google.com/apis/credentials).
-2. Create (or reuse) a project for this CRM.
+2. Create (or reuse) a project for Ardjo's Comp AI installs.
 3. Enable the [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
    and the [Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com).
 4. OAuth consent screen:
@@ -78,19 +116,17 @@ for Gmail.
    - If it is External, add **hi@ardjo.design** as a test user. `gmail.readonly`
      is restricted; going External for production needs Google's verification.
 5. Create an OAuth client ID → **Web application**.
-6. Authorised redirect URIs — **API origin**, never the app origin:
-
-   | Environment | Redirect URI |
-   | --- | --- |
-   | Local | `http://localhost:3001/api/auth/callback/google` |
-   | Deployed API | `https://<API_HOST>/api/auth/callback/google` |
-
-7. Put `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env` (and later in
-   Vercel). Both or neither.
+6. Authorised redirect URIs — **API origin**, never the app origin. List every
+   install you actually run (see the table above).
+7. Put `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in **this** install's
+   `.env` (and later in **this** Vercel project). Both or neither.
 
 Sign in at `http://localhost:3000` with **hi@ardjo.design**. Grant Gmail and
 Calendar. Sync is forward-only: the first pass records the current Gmail
 history id and the current time on Calendar. It does not import old mail.
+
+Mailbox grant is per install. Signing in here does not grant the company CRM,
+and the reverse is also true.
 
 ### Google Drive
 
@@ -151,8 +187,9 @@ Set none of these and the agent still runs from Gmail, Calendar, and the CRM.
 
 A missing key removes a place to look. It never throws.
 
-Notion: share the target databases with the integration or search returns
-nothing.
+Notion: share the Cala Rossa target databases with the integration or search
+returns nothing. Do not point this key at the company CRM's Notion workspace
+unless that overlap is deliberate.
 
 Linear: the agent **searches**. It does not create issues. Create from Cursor
 with a derived title, never with a pasted mail body. See
@@ -166,11 +203,13 @@ A human sends.
 
 ## Vercel (do not deploy from this agent)
 
-Three deployments plus Postgres, same as upstream README.
+Three deployments plus Postgres, same as upstream README. Create **new**
+Vercel projects for this repo. Do not attach this git repo to the company
+CRM's projects.
 
 | Process | What to set |
 | --- | --- |
-| All three + migrate | `DATABASE_URL` |
+| All three + migrate | `DATABASE_URL` (Cala Rossa Neon only) |
 | App + API | `BETTER_AUTH_SECRET`, `ALLOWED_SIGN_IN`, `API_URL`, `APP_URL` |
 | API + App | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
 | API | `CRON_SECRET`, optional `REDIS_URL` |
@@ -184,16 +223,23 @@ first production sign-in.
 Preview deploys share production `DATABASE_URL` in this product. Do not test
 migrations on a preview. `docs/setup.md`.
 
-Pull env with `vercel env pull .env.vercel`, never onto `.env.local`.
+Pull env with `vercel env pull .env.vercel`, never onto `.env.local`. Pulling
+the **company** project's env into this repo is how the two databases get
+swapped.
 
-## Cala Rossa profile
+## Dual-install checklist
 
-`scripts/cala-rossa/` is a separate local database for that buyer list. It is
-not this GojiberryAI workspace. Keep the two databases apart.
+- [ ] This repo uses a Cala Rossa Neon URL, not the company one.
+- [ ] `ardjo-s/compai-crm` uses a different Neon URL.
+- [ ] Each install has its own `BETTER_AUTH_SECRET` / `AGENT_BRIDGE_SECRET` / `CRON_SECRET`.
+- [ ] Google OAuth lists this API callback **and** the company API callback.
+- [ ] Vercel projects for this repo are not the company projects.
+- [ ] Workspace onboarding name here is Cala Rossa, not the company name.
 
-## Secrets checklist (paste locally / in Vercel)
+## Secrets checklist (paste locally / in this Vercel project)
 
-Names only. Generate or copy from the provider console.
+Names only. Generate or copy from the provider console. Do not paste values
+from the company install.
 
 **Required to sign in**
 
@@ -201,7 +247,7 @@ Names only. Generate or copy from the provider console.
 - [ ] `ALLOWED_SIGN_IN` (`ardjo.design,hi@ardjo.design`)
 - [ ] `GOOGLE_CLIENT_ID`
 - [ ] `GOOGLE_CLIENT_SECRET`
-- [ ] `DATABASE_URL`
+- [ ] `DATABASE_URL` (Cala Rossa only)
 
 **Required for Agent tab + dispatch poke**
 

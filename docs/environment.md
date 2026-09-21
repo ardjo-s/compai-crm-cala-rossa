@@ -8,6 +8,10 @@ Setup, DB commands, Google Cloud and the `vercel env pull` hazard: `docs/setup.m
 and nothing that is not read. `packages/env` walks up to the workspace root and reads
 `.env`, then `.env.local` on top.
 
+This fork also ships [`.env.ardjo.example`](../.env.ardjo.example) for the
+**Cala Rossa** install. Copy that overlay into `.env`. Do not copy `.env` from
+`ardjo-s/compai-crm`. Never share `DATABASE_URL`. Walkthrough: `docs/ardjo-setup.md`.
+
 - **Real environment variables always win** — the loader never overwrites
   `process.env`, so Vercel/Docker/CI takes precedence.
 - **Never add a per-package `.env`.** Four once existed with duplicate

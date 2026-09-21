@@ -1,5 +1,9 @@
 # Outbound prospecting → this CRM
 
+This install is the **Cala Rossa** CRM (`ardjo-s/compai-crm-cala-rossa`).
+Do not file THEWHATIF / GojiberryAI prospects here. Those belong in
+`ardjo-s/compai-crm`, which has its own database.
+
 An external outbound bot may **file** companies and contacts here. It may not
 invent people. Intelligence stays in `apps/agent`. This document is the contract
 the bot must satisfy.
@@ -61,7 +65,7 @@ There is no public HTTP intake for this payload yet. Three legal doors:
    cookie; it refuses `NODE_ENV=production`.
 2. **Prisma import script** — `scripts/cala-rossa/import.ts` is the pattern:
    parse at the boundary, write `RecordSource.IMPORT`, create **no contact**
-   until a public source verifies the person. Point a GojiberryAI importer at
+   until a public source verifies the person. Point a Cala Rossa importer at
    a JSON file that already passed `parseProspectIntake`.
 3. **A human in the UI** — paste the observed company, then add the person
    when the email is on a page.
