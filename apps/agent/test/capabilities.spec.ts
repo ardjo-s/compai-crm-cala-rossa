@@ -9,7 +9,13 @@ import {
 	unavailable,
 } from "../agent/lib/capabilities";
 
-const KEYS = ["PERPLEXITY_API_KEY", "BLOB_READ_WRITE_TOKEN"] as const;
+const KEYS = [
+	"PERPLEXITY_API_KEY",
+	"BLOB_READ_WRITE_TOKEN",
+	"NOTION_API_KEY",
+	"LINEAR_API_KEY",
+	"X_BEARER_TOKEN",
+] as const;
 
 const saved: Record<string, string | undefined> = {};
 
@@ -38,6 +44,9 @@ describe("capabilities", () => {
 
 		expect(await enabled("PERPLEXITY_API_KEY")).toBe(true);
 		expect(await enabled("BLOB_READ_WRITE_TOKEN")).toBe(false);
+		expect(await enabled("NOTION_API_KEY")).toBe(false);
+		expect(await enabled("LINEAR_API_KEY")).toBe(false);
+		expect(await enabled("X_BEARER_TOKEN")).toBe(false);
 	});
 
 	it("treats blank and whitespace as unset", async () => {

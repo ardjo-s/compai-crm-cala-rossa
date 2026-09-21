@@ -79,4 +79,38 @@ describe("the committed .env.example", () => {
 			if (line.startsWith("ALLOWED_SIGN_IN")) expect(value).toBe('""');
 		}
 	});
+
+	it("names the optional Cursor-tool keys", () => {
+		for (const key of ["NOTION_API_KEY", "LINEAR_API_KEY", "X_BEARER_TOKEN"]) {
+			expect(example).toContain(key);
+		}
+	});
+});
+
+describe("the committed .env.ardjo.example", () => {
+	const example = readFileSync(join(repoRoot, ".env.ardjo.example"), "utf8");
+
+	it("sets the work allow-list and no secrets", () => {
+		expect(example).toContain('ALLOWED_SIGN_IN="ardjo.design,hi@ardjo.design"');
+		expect(example).toContain('BETTER_AUTH_SECRET=""');
+		expect(example).toContain('GOOGLE_CLIENT_SECRET=""');
+		expect(example).not.toContain("gmail.com");
+	});
+
+	it("ships no filled secret field", () => {
+		for (const line of example.split("\n")) {
+			if (line.startsWith("#") || !line.includes("=")) continue;
+			const key = line.slice(0, line.indexOf("="));
+			const value = line.slice(line.indexOf("=") + 1).trim();
+			if (
+				key === "ALLOWED_SIGN_IN" ||
+				key === "DATABASE_URL" ||
+				key === "TEST_DATABASE_URL"
+			) {
+				expect(value.length).toBeGreaterThan(0);
+				continue;
+			}
+			expect(value).toBe('""');
+		}
+	});
 });

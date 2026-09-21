@@ -26,7 +26,7 @@ identifying *this person*, not merely being consistent with them.
 
 | Kind | Use it when |
 | --- | --- |
-| `web.cited-claim` | A page states it and you have the URL. |
+| `web.cited-claim` | A page states it and you have the URL — including a Notion page, an X permalink, or a Linear issue. |
 | `search.cites-profile` | A search for them by name and employer returned this profile. |
 | `handle.name-form` | The handle is a construction of their name. Weak: `github.com/lewis` is a form of every Lewis's name. |
 | `employer-only` | The employer matches but the name does not. Nearly worthless on its own, and deliberately so — this is how a colleague gets filed as the contact. |

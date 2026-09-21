@@ -6,10 +6,12 @@ node_modules
 .pnp.js
 
 # Local env files. `.env.example` is the one that is committed — it is the
-# documentation, so the catch-all below must not swallow it.
+# documentation, so the catch-all below must not swallow it. The Ardjo overlay
+# is non-secret and is committed too.
 .env
 .env.*
 !.env.example
+!.env.ardjo.example
 
 # Testing
 coverage

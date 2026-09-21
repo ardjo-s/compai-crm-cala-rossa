@@ -113,6 +113,9 @@ single place that knows what is set.
 | --- | --- |
 | `PERPLEXITY_API_KEY` | Open-web research with citations; finds a LinkedIn slug |
 | `GITHUB_TOKEN` | Raises the GitHub rate limit from 60/hour |
+| `NOTION_API_KEY` | Search Notion pages this install can read |
+| `LINEAR_API_KEY` | Search existing Linear issues (read-only; no create) |
+| `X_BEARER_TOKEN` | Dated public posts from an X profile already on the record |
 | `BLOB_READ_WRITE_TOKEN` | Mirrors logos and photos into Blob |
 | `AI_GATEWAY_API_KEY` | The model. Not needed on Vercel (OIDC) |
 | `AGENT_BRIDGE_SECRET` | The rep-facing Agent panel — see `agent.md` |
